@@ -1,24 +1,63 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Plus } from "lucide-react";
-import { apiGet } from "@/lib/api";
+import { Plus, X } from "lucide-react";
+import { apiGet, apiPost } from "@/lib/api";
 
 interface InventoryItem { _id: string; name: string; quantity: number; unit: string; threshold: number; branchId?: { name: string }; }
+
+const UNITS = ["pieces", "kg", "litres", "boxes", "packets", "bottles", "metres", "dozen"];
 
 export default function BmInventoryPage() {
     const [items, setItems] = useState<InventoryItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function load() {
-            setLoading(true);
-            const res = await apiGet<InventoryItem[]>("/inventory");
-            if (res.success && res.data) setItems(res.data);
-            setLoading(false);
+    // Modal state
+    const [showForm, setShowForm] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState("");
+
+    // Form fields
+    const [itemName, setItemName] = useState("");
+    const [quantity, setQuantity] = useState("");
+    const [unit, setUnit] = useState("pieces");
+    const [threshold, setThreshold] = useState("");
+
+    async function loadData() {
+        setLoading(true);
+        const res = await apiGet<InventoryItem[]>("/inventory");
+        if (res.success && res.data) setItems(res.data);
+        setLoading(false);
+    }
+
+    useEffect(() => { loadData(); }, []);
+
+    function resetForm() {
+        setItemName(""); setQuantity(""); setUnit("pieces"); setThreshold(""); setFormError("");
+    }
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setFormError("");
+        if (!itemName.trim()) return setFormError("Item name is required.");
+        if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) return setFormError("Enter a valid quantity.");
+        if (!threshold || isNaN(Number(threshold)) || Number(threshold) < 0) return setFormError("Enter a valid threshold.");
+        setSubmitting(true);
+        const res = await apiPost("/inventory", {
+            name: itemName.trim(),
+            quantity: Number(quantity),
+            unit,
+            threshold: Number(threshold),
+        });
+        if (res.success) {
+            setShowForm(false);
+            resetForm();
+            await loadData();
+        } else {
+            setFormError(res.error || "Failed to add item.");
         }
-        load();
-    }, []);
+        setSubmitting(false);
+    }
 
     const lowStock = items.filter(i => i.quantity < i.threshold);
     const totalValue = items.reduce((s, i) => s + i.quantity, 0);
@@ -35,7 +74,7 @@ export default function BmInventoryPage() {
                         <h1 className="text-[28px] font-playfair font-bold text-[#2B1512]">Inventory</h1>
                         <p className="text-[13px] text-[#8e8484] font-medium mt-1">Track and manage all inventory items</p>
                     </div>
-                    <button className="flex items-center gap-2 bg-[#2B1512] text-white px-5 py-2.5 rounded-xl text-[13px] font-bold hover:bg-[#1a0f0d] transition-colors shadow-sm"><Plus size={16} /> Add Item</button>
+                    <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 bg-[#2B1512] text-white px-5 py-2.5 rounded-xl text-[13px] font-bold hover:bg-[#1a0f0d] transition-colors shadow-sm"><Plus size={16} /> Add Item</button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -108,6 +147,81 @@ export default function BmInventoryPage() {
                     </div>
                 </div>
             </div>
+
+            {/* ── Add Item Modal ─────────────────────────────────────── */}
+            {showForm && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowForm(false)}>
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[440px] overflow-hidden" onClick={e => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="bg-[#2B1512] px-6 py-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-[11px] font-bold text-white/50 uppercase tracking-widest mb-1">Inventory</p>
+                                <h2 className="text-[20px] font-playfair font-bold text-white">Add New Item</h2>
+                            </div>
+                            <button onClick={() => setShowForm(false)} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+                                <X size={15} className="text-white" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                            {formError && (
+                                <div className="bg-[#FEF2F2] border border-[#FCA5A5] text-[#DC2626] px-4 py-3 rounded-xl text-[13px] font-medium">{formError}</div>
+                            )}
+
+                            <div>
+                                <label className="block text-[11px] font-bold text-[#8e8484] uppercase tracking-widest mb-2">Item Name *</label>
+                                <input
+                                    value={itemName} onChange={e => setItemName(e.target.value)}
+                                    placeholder="e.g. Candle Holders"
+                                    className="w-full px-4 py-3 bg-[#FAFAF8] border border-gray-200 rounded-xl text-[13px] text-[#2B1512] focus:outline-none focus:ring-2 focus:ring-[#CBA135] font-medium"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[11px] font-bold text-[#8e8484] uppercase tracking-widest mb-2">Quantity *</label>
+                                    <input
+                                        type="number" min="0" value={quantity} onChange={e => setQuantity(e.target.value)}
+                                        placeholder="0"
+                                        className="w-full px-4 py-3 bg-[#FAFAF8] border border-gray-200 rounded-xl text-[13px] text-[#2B1512] focus:outline-none focus:ring-2 focus:ring-[#CBA135] font-medium"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[11px] font-bold text-[#8e8484] uppercase tracking-widest mb-2">Unit *</label>
+                                    <select value={unit} onChange={e => setUnit(e.target.value)}
+                                        className="w-full px-4 py-3 bg-[#FAFAF8] border border-gray-200 rounded-xl text-[13px] text-[#2B1512] focus:outline-none focus:ring-2 focus:ring-[#CBA135] font-medium appearance-none">
+                                        {UNITS.map(u => <option key={u}>{u}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[11px] font-bold text-[#8e8484] uppercase tracking-widest mb-2">Low Stock Threshold *</label>
+                                <input
+                                    type="number" min="0" value={threshold} onChange={e => setThreshold(e.target.value)}
+                                    placeholder="Alert when quantity falls below this"
+                                    className="w-full px-4 py-3 bg-[#FAFAF8] border border-gray-200 rounded-xl text-[13px] text-[#2B1512] focus:outline-none focus:ring-2 focus:ring-[#CBA135] font-medium"
+                                />
+                                <p className="text-[11px] text-[#8e8484] mt-1.5">Item will be flagged as low stock below this quantity.</p>
+                            </div>
+
+                            <div className="flex gap-3 pt-2">
+                                <button type="button" onClick={() => setShowForm(false)}
+                                    className="flex-1 px-4 py-3 bg-gray-100 text-[#4B5563] rounded-xl text-[13px] font-bold hover:bg-gray-200 transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={submitting}
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#2B1512] text-white rounded-xl text-[13px] font-bold hover:bg-[#1a0f0d] transition-colors disabled:opacity-60">
+                                    {submitting
+                                        ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        : <Plus size={15} />}
+                                    {submitting ? "Saving..." : "Add Item"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

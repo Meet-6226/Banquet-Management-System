@@ -1,7 +1,6 @@
 "use client";
 
 import Sidebar from "@/components/Sidebar";
-import TopNav from "@/components/TopNav";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function DashboardLayout({
@@ -23,7 +22,6 @@ export default function DashboardLayout({
         <div className="flex h-screen bg-[var(--background)] overflow-hidden">
             <Sidebar />
             <div className="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">
-                <TopNav />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto">
                     {children}
                 </main>

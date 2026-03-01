@@ -71,27 +71,8 @@ export default function BmDashboardPage() {
         <div className="flex flex-col w-full min-h-full bg-[#F5F3ED] overflow-x-hidden">
 
             {/* TopNav */}
-            <header className="h-[68px] px-8 flex flex-shrink-0 items-center justify-between bg-[#F5F3ED] sticky top-0 z-10 border-b border-black/5">
+            <header className="h-[68px] px-8 flex flex-shrink-0 items-center bg-[#F5F3ED] sticky top-0 z-10 border-b border-black/5">
                 <h1 className="text-[22px] font-playfair font-bold text-[#2B1512]">Manager Dashboard</h1>
-                <div className="flex items-center gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8e8484]" size={14} strokeWidth={2.5} />
-                        <input type="text" placeholder="Search events, bookings, or stock..." className="pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-[12px] w-[260px] focus:outline-none focus:ring-1 focus:ring-[#DFB342] font-medium text-[#2B1512] placeholder:text-[#a39b9b]" />
-                    </div>
-                    <button className="relative w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#a39b9b] hover:text-[#2B1512] shadow-sm">
-                        <Bell size={16} strokeWidth={2.5} />
-                        <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#EF4444] rounded-full"></span>
-                    </button>
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-full bg-[#2B1512] flex items-center justify-center">
-                            <span className="text-[11px] font-bold text-white">{initials}</span>
-                        </div>
-                        <div>
-                            <div className="text-[13px] font-bold text-[#2B1512] leading-tight">{user?.name || "Manager"}</div>
-                            <div className="text-[9px] font-bold text-[#DFB342] uppercase tracking-widest">{user?.role?.replace("_", " ") || "BRANCH MANAGER"}</div>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <div className="px-8 py-6 flex flex-col gap-6">

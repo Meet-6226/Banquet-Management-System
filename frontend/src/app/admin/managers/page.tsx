@@ -107,14 +107,8 @@ export default function ManagersPage() {
 
     return (
         <div className="flex flex-col w-full min-h-full bg-[#F8F6F2] p-10 overflow-x-hidden">
-            <div className="flex items-center justify-between mb-10 w-full max-w-[1440px]">
+            <div className="mb-10 w-full max-w-[1440px]">
                 <h1 className="text-[32px] font-playfair font-bold text-[#2B1512] leading-[1.2]">Manager Directory</h1>
-                <div className="flex items-center gap-6">
-                    <div className="relative w-full max-w-[320px]">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#a39b9b]" size={18} strokeWidth={2.5} />
-                        <input type="text" placeholder="Search managers..." className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#CBA135] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] text-[13px] text-[#4A322D] placeholder:text-[#a39b9b] font-medium" />
-                    </div>
-                </div>
             </div>
 
             <div className="flex flex-col w-full flex-1 max-w-[1440px] mb-8">
@@ -160,7 +154,7 @@ export default function ManagersPage() {
                                 {users.length === 0 ? (
                                     <tr><td colSpan={5} className="py-12 text-center text-gray-400">No users found. Users API endpoint may need to be created.</td></tr>
                                 ) : users.map((u) => {
-                                    const roleInfo = ROLE_LABELS[u.role] || { label: u.role, style: "text-gray-500 bg-gray-100" };
+                                    const roleInfo = ROLE_LABELS[u.role] || { label: u.role, style: "" };
                                     const initials = u.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
                                     return (
                                         <tr key={u._id} className="group hover:bg-[#FDFBF9] transition-colors">
@@ -174,7 +168,7 @@ export default function ManagersPage() {
                                                 </div>
                                             </td>
                                             <td className="py-5">
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-[6px] text-[10px] font-bold tracking-widest ${roleInfo.style}`}>{roleInfo.label}</span>
+                                                <span className="text-[13px] font-medium text-[#4B5563]">{roleInfo.label}</span>
                                             </td>
                                             <td className="py-5 text-[14px] font-bold text-[#2B3445]">
                                                 {u.branchId?.name || "—"}

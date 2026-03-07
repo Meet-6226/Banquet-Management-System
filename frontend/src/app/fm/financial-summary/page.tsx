@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiGet } from "@/lib/api";
 interface RevenueData { summary: { totalRevenue: number; totalPaid: number; totalOutstanding: number; invoiceCount: number } }
-interface Booking { _id: string; totalAmount?: number; advancePaid?: number; status: string; }
+interface Booking { _id: string; totalAmount?: number; advancePayment?: number; status: string; }
 export default function FmFinancialSummaryPage() {
     const [revenue, setRevenue] = useState<RevenueData["summary"] | null>(null);
     const [bookings, setBookings] = useState<Booking[]>([]);

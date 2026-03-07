@@ -55,7 +55,7 @@ export function ShellSidebar({
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] transition-all ${isActive
+                            className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-[14px] transition-all ${isActive
                                 ? "bg-white text-[#2B1512] font-bold shadow-sm"
                                 : "text-[#d6cece] hover:bg-white/5 hover:text-white font-medium"
                                 }`}

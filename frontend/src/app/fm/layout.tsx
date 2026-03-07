@@ -36,7 +36,7 @@ export default function FmLayout({
             <ShellSidebar
                 navItems={fmNavItems}
                 roleTitle="Finance Division"
-                brandName="Banquet Manager"
+                brandName="BanquetPro"
             />
 
             <div className="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">

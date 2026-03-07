@@ -16,7 +16,7 @@ export async function PUT(
         const user = await authenticate(req);
         if (isAuthError(user)) return user;
 
-        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER);
+        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER, USER_ROLES.FINANCE_MANAGER);
         if (roleErr) return roleErr;
 
         await connectDB();

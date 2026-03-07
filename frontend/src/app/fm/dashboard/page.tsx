@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { DollarSign, TrendingUp, FileText, AlertCircle } from "lucide-react";
 import { apiGet } from "@/lib/api";
 interface RevenueData { summary: { totalRevenue: number; totalPaid: number; totalOutstanding: number; invoiceCount: number } }
-interface Booking { _id: string; eventName?: string; totalAmount?: number; advancePaid?: number; status: string; }
+interface Booking { _id: string; customerId?: { name: string }; totalAmount?: number; advancePayment?: number; status: string; }
 export default function FmDashboardPage() {
     const [revenue, setRevenue] = useState<RevenueData["summary"] | null>(null);
     const [bookings, setBookings] = useState<Booking[]>([]);
@@ -24,8 +24,8 @@ export default function FmDashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     <h2 className="text-[18px] font-playfair font-bold text-[#2B1512] mb-4">Outstanding Payments</h2>
-                    <div className="space-y-3">{bookings.filter(b => (b.totalAmount || 0) - (b.advancePaid || 0) > 0).length === 0 ? <p className="text-sm text-gray-400 py-4">All payments collected ✓</p> : bookings.filter(b => (b.totalAmount || 0) - (b.advancePaid || 0) > 0).map(b => (
-                        <div key={b._id} className="flex justify-between items-center py-2 border-b border-gray-50"><p className="font-bold text-[13px] text-[#2B1512]">{b.eventName || "Booking"}</p><span className="font-bold text-[#DC2626] text-[13px]">₹{((b.totalAmount || 0) - (b.advancePaid || 0)).toLocaleString("en-IN")}</span></div>
+                    <div className="space-y-3">{bookings.filter(b => (b.totalAmount || 0) - (b.advancePayment || 0) > 0).length === 0 ? <p className="text-sm text-gray-400 py-4">All payments collected ✓</p> : bookings.filter(b => (b.totalAmount || 0) - (b.advancePayment || 0) > 0).map(b => (
+                        <div key={b._id} className="flex justify-between items-center py-2 border-b border-gray-50"><p className="font-bold text-[13px] text-[#2B1512]">{b.customerId?.name || "Booking"}</p><span className="font-bold text-[#DC2626] text-[13px]">₹{((b.totalAmount || 0) - (b.advancePayment || 0)).toLocaleString("en-IN")}</span></div>
                     ))}</div>
                 </div>
                 <div className="bg-[#2B1512] rounded-2xl p-6 text-white">

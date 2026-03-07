@@ -13,7 +13,7 @@ export async function GET(req: Request): Promise<NextResponse> {
         if (isAuthError(user)) return user;
 
         await connectDB();
-        const filter = user.role === USER_ROLES.ADMIN ? {} : { _id: user.branchId };
+        const filter = (user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.FINANCE_MANAGER) ? {} : { _id: user.branchId };
         const branches = await Branch.find(filter).populate('managerId', 'name email');
         return successResponse(branches);
     } catch (err: unknown) {

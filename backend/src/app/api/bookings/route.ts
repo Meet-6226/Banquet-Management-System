@@ -16,7 +16,7 @@ export async function GET(req: Request): Promise<NextResponse> {
         const user = await authenticate(req);
         if (isAuthError(user)) return user;
 
-        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER, USER_ROLES.SALES_EXECUTIVE, USER_ROLES.EVENT_MANAGER);
+        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER, USER_ROLES.SALES_EXECUTIVE, USER_ROLES.EVENT_MANAGER, USER_ROLES.FINANCE_MANAGER);
         if (roleErr) return roleErr;
 
         await connectDB();

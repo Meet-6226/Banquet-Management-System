@@ -15,7 +15,7 @@ export async function PUT(
         const user = await authenticate(req);
         if (isAuthError(user)) return user;
 
-        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER);
+        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER, USER_ROLES.FINANCE_MANAGER);
         if (roleErr) return roleErr;
 
         await connectDB();
@@ -33,5 +33,30 @@ export async function PUT(
     } catch (err: unknown) {
         console.error('[Vendors PUT Error]', err);
         return errorResponse(err instanceof Error ? err.message : 'Failed to update vendor');
+    }
+}
+
+// ─── DELETE /api/vendors/:id ────────────────────────────────
+export async function DELETE(
+    req: Request,
+    { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+    try {
+        const user = await authenticate(req);
+        if (isAuthError(user)) return user;
+
+        const roleErr = authorize(user, USER_ROLES.ADMIN, USER_ROLES.BRANCH_MANAGER, USER_ROLES.FINANCE_MANAGER);
+        if (roleErr) return roleErr;
+
+        await connectDB();
+        const { id } = await params;
+
+        const vendor = await Vendor.findByIdAndDelete(id);
+        if (!vendor) return errorResponse('Vendor not found', 404);
+
+        return successResponse(null, 'Vendor deleted successfully');
+    } catch (err: unknown) {
+        console.error('[Vendors DELETE Error]', err);
+        return errorResponse(err instanceof Error ? err.message : 'Failed to delete vendor');
     }
 }

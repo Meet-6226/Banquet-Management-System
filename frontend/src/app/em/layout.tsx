@@ -36,7 +36,7 @@ export default function UserLayout({
             <ShellSidebar
                 navItems={emNavItems}
                 roleTitle="Event Manager"
-                brandName="EVENTPRO"
+                brandName="BanquetPro"
             />
 
             <div className="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">
